@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de Signature - Soluvia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Space Grotesk', Arial, sans-serif;
+      background: #F5F7F8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 900px;
+      width: 100%;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-size: 28px;
+      color: #102D3A;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      font-size: 14px;
+      color: #8AA0A8;
+      margin-top: 8px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 36px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      margin-bottom: 28px;
+    }
+    .card-title {
+      font-size: 11px;
+      color: #8AA0A8;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #102D3A;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .form-group input {
+      font-family: 'Space Grotesk', Arial, sans-serif;
+      font-size: 14px;
+      padding: 12px 16px;
+      border: 2px solid #E8EDEF;
+      border-radius: 10px;
+      outline: none;
+      color: #102D3A;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus {
+      border-color: #58855C;
+    }
+    .form-group input::placeholder {
+      color: #B8C8CE;
+    }
+    .preview-wrapper {
+      padding: 30px;
+      background: #FAFBFC;
+      border-radius: 12px;
+      border: 2px dashed #E8EDEF;
+    }
+    .btn-copy {
+      font-family: 'Space Grotesk', Arial, sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      padding: 14px 28px;
+      background: #58855C;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.5px;
+    }
+    .btn-copy:hover {
+      background: #4a7350;
+      transform: translateY(-1px);
+    }
+    .btn-copy:active {
+      transform: translateY(0);
+    }
+    .btn-copy.copied {
+      background: #102D3A;
+    }
+    .tuto-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .tuto-step {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      position: relative;
+    }
+    .step-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .step-number {
+      width: 36px;
+      height: 36px;
+      background: #58855C;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-line {
+      width: 2px;
+      flex-grow: 1;
+      background: #D9E5DA;
+      min-height: 20px;
+    }
+    .tuto-step:last-child .step-line {
+      display: none;
+    }
+    .step-content {
+      padding-bottom: 28px;
+    }
+    .tuto-step:last-child .step-content {
+      padding-bottom: 0;
+    }
+    .step-content h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #102D3A;
+      margin-bottom: 6px;
+    }
+    .step-content p {
+      font-size: 13px;
+      color: #5A7A82;
+      line-height: 1.6;
+    }
+    .step-content .path {
+      display: inline-block;
+      background: #F0F5F1;
+      color: #58855C;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 6px;
+      letter-spacing: 0.3px;
+    }
+    .step-content .shortcut {
+      display: inline-block;
+      background: #102D3A;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .tuto-note {
+      margin-top: 20px;
+      padding: 14px 18px;
+      background: #FFF8E6;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #8B6E00;
+      line-height: 1.5;
+      border-left: 3px solid #F5C842;
+    }
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Générateur de Signature Email</h1>
+      <p>Remplis tes informations, copie ta signature et colle-la dans Gmail</p>
+    </div>
+
+    <!-- FORMULAIRE -->
+    <div class="card">
+      <p class="card-title">Tes informations</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Prénom Nom</label>
+          <input type="text" id="fullName" placeholder="Jean Dupont" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Poste</label>
+          <input type="text" id="jobTitle" placeholder="Chef de Projet" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Téléphone</label>
+          <input type="tel" id="phone" placeholder="+33 6 12 34 56 78" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="jdupont@mysoluvia.com" oninput="updatePreview()">
+        </div>
+      </div>
+    </div>
+
+    <!-- PRÉVISUALISATION -->
+    <div class="card">
+      <p class="card-title">Prévisualisation</p>
+      <div class="preview-wrapper">
+        <div id="signature-preview"></div>
+      </div>
+      <button class="btn-copy" onclick="copySignature()">
+        <span id="btn-text">📋 Copier la signature</span>
+      </button>
+    </div>
+
+    <!-- TUTORIEL -->
+    <div class="card">
+      <p class="card-title">Comment ajouter ta signature dans Gmail</p>
+      <div class="tuto-steps">
+
+        <div class="tuto-step">
+          <div class="step-left">
+            <div class="step-number">1</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h3>Copie ta signature</h3>
+            <p>Remplis tes informations ci-dessus puis clique sur le bouton vert <strong>"Copier la signature"</strong>.</p>
+          </div>
+        </div>
+
+        <div class="tuto-step">
+          <div class="step-left">
+            <div class="step-number">2</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h3>Ouvre les paramètres Gmail</h3>
+            <p>Va sur <a href="https://mail.google.com" target="_blank" style="color: #58855C; font-weight: 600;">mail.google.com</a>, clique sur l'icône ⚙️ en haut à droite, puis sur <strong>"Voir tous les paramètres"</strong>.</p>
+            <span class="path">⚙️ &nbsp;→&nbsp; Voir tous les paramètres</span>
+          </div>
+        </div>
+
+        <div class="tuto-step">
+          <div class="step-left">
+            <div class="step-number">3</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h3>Va dans la section Signature</h3>
+            <p>Tu es dans l'onglet <strong>"Général"</strong> par défaut. Descends jusqu'à trouver la section <strong>"Signature"</strong>.</p>
+            <span class="path">Onglet Général &nbsp;→&nbsp; Descendre jusqu'à "Signature"</span>
+          </div>
+        </div>
+
+        <div class="tuto-step">
+          <div class="step-left">
+            <div class="step-number">4</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h3>Crée une nouvelle signature</h3>
+            <p>Clique sur <strong>"+ Créer"</strong>, donne-lui un nom (ex: "Soluvia"), puis clique dans la zone de texte à droite et colle ta signature.</p>
+            <span class="shortcut">Ctrl + V</span> &nbsp;ou&nbsp; <span class="shortcut">Cmd + V</span> &nbsp;sur Mac
+          </div>
+        </div>
+
+        <div class="tuto-step">
+          <div class="step-left">
+            <div class="step-number">5</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h3>Active ta signature par défaut</h3>
+            <p>Juste en dessous, dans <strong>"Paramètres par défaut de la signature"</strong>, sélectionne ta nouvelle signature pour les <strong>nouveaux e-mails</strong> et les <strong>réponses/transferts</strong>.</p>
+          </div>
+        </div>
+
+        <div class="tuto-step">
+          <div class="step-left">
+            <div class="step-number">6</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h3>Enregistre</h3>
+            <p>Descends tout en bas de la page et clique sur <strong>"Enregistrer les modifications"</strong>. C'est fait !</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="tuto-note">
+        <strong>Astuce :</strong> si la signature s'affiche mal après le collage, essaie de supprimer tout le contenu de la zone de signature avant de coller. N'utilise pas le mode texte brut.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function generateSignatureHTML(name, title, phone, email) {
+      return `<table cellpadding="0" cellspacing="0" border="0" style="font-family: 'Space Grotesk', Arial, Helvetica, sans-serif; color: #102D3A;">
+      <tr>
+        <td style="vertical-align: middle; padding-right: 22px;">
+          <a href="https://mysoluvia.com" style="text-decoration: none;">
+            <img src="https://lh3.googleusercontent.com/d/1gXsZWGU06nnpfHhRYznWOX87ofLTfy5D" alt="Soluvia" width="140" style="display: block;" />
+          </a>
+        </td>
+        <td style="width: 3px; background-color: #58855C; font-size: 0; line-height: 0;" width="3">&nbsp;</td>
+        <td style="padding-left: 22px; vertical-align: top;">
+          <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td colspan="2" style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 18px; font-weight: 700; color: #102D3A; padding-bottom: 1px; letter-spacing: -0.3px;">
+                ${name || 'Prénom Nom'}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 12px; color: #58855C; font-weight: 600; padding-bottom: 14px; text-transform: uppercase; letter-spacing: 1.5px;">
+                ${title || 'Poste'}
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 28px; vertical-align: middle; padding-bottom: 7px;">
+                <img src="https://img.icons8.com/material-rounded/48/58855C/phone.png" alt="" width="14" height="14" style="display: block;" />
+              </td>
+              <td style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 13px; color: #102D3A; padding-left: 10px; padding-bottom: 7px; font-weight: 500;">
+                ${phone || '+33 6 XX XX XX XX'}
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 28px; vertical-align: middle; padding-bottom: 7px;">
+                <img src="https://img.icons8.com/material-rounded/48/58855C/new-post.png" alt="" width="14" height="14" style="display: block;" />
+              </td>
+              <td style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 13px; padding-left: 10px; padding-bottom: 7px; font-weight: 500;">
+                <a href="mailto:${email || ''}" style="color: #102D3A; text-decoration: none;">${email || 'email@mysoluvia.com'}</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 28px; vertical-align: middle;">
+                <img src="https://img.icons8.com/material-rounded/48/58855C/globe--v1.png" alt="" width="14" height="14" style="display: block;" />
+              </td>
+              <td style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 13px; padding-left: 10px; font-weight: 500;">
+                <a href="https://mysoluvia.com" style="color: #58855C; text-decoration: none;">mysoluvia.com</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>`;
+    }
+
+    function updatePreview() {
+      const name = document.getElementById('fullName').value;
+      const title = document.getElementById('jobTitle').value;
+      const phone = document.getElementById('phone').value;
+      const email = document.getElementById('email').value;
+      document.getElementById('signature-preview').innerHTML = generateSignatureHTML(name, title, phone, email);
+    }
+
+    function copySignature() {
+      const signatureEl = document.getElementById('signature-preview');
+      const range = document.createRange();
+      range.selectNodeContents(signatureEl);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.execCommand('copy');
+      selection.removeAllRanges();
+
+      const btn = document.querySelector('.btn-copy');
+      const btnText = document.getElementById('btn-text');
+      btn.classList.add('copied');
+      btnText.textContent = '✅ Signature copiée !';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btnText.textContent = '📋 Copier la signature';
+      }, 2500);
+    }
+
+    // Initialiser la prévisualisation
+    updatePreview();
+  </script>
+</body>
+</html>
