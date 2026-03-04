@@ -243,9 +243,14 @@
       <div class="preview-wrapper">
         <div id="signature-preview"></div>
       </div>
-      <button class="btn-copy" onclick="copySignature()">
-        <span id="btn-text">📋 Copier la signature</span>
-      </button>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn-copy" onclick="copySignature()">
+          <span id="btn-text">📋 Copier la signature</span>
+        </button>
+        <button class="btn-copy" style="background: #102D3A;" onclick="copyHTML()">
+          <span id="btn-html-text">&lt;/&gt; Copier le code HTML</span>
+        </button>
+      </div>
     </div>
 
     <!-- TUTORIEL -->
@@ -408,6 +413,25 @@
         btn.classList.remove('copied');
         btnText.textContent = '📋 Copier la signature';
       }, 2500);
+    }
+
+    function copyHTML() {
+      const name = document.getElementById('fullName').value;
+      const title = document.getElementById('jobTitle').value;
+      const phone = document.getElementById('phone').value;
+      const email = document.getElementById('email').value;
+      const html = generateSignatureHTML(name, title, phone, email);
+      navigator.clipboard.writeText(html).then(() => {
+        const btn = document.querySelectorAll('.btn-copy')[1];
+        const btnText = document.getElementById('btn-html-text');
+        const originalBg = btn.style.background;
+        btn.style.background = '#58855C';
+        btnText.textContent = '✅ Code HTML copié !';
+        setTimeout(() => {
+          btn.style.background = '#102D3A';
+          btnText.textContent = '</> Copier le code HTML';
+        }, 2500);
+      });
     }
 
     // Initialiser la prévisualisation
