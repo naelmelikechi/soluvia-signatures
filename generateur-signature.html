@@ -83,6 +83,29 @@
     .form-group input::placeholder {
       color: #B8C8CE;
     }
+    .form-group input:disabled {
+      background: #F5F7F8;
+      color: #B8C8CE;
+    }
+    .form-group label.checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      margin-bottom: 0;
+      font-size: 12px;
+      font-weight: 500;
+      color: #5A7A82;
+      text-transform: none;
+      letter-spacing: 0;
+      cursor: pointer;
+    }
+    .form-group label.checkbox-row input {
+      width: 15px;
+      height: 15px;
+      accent-color: #58855C;
+      cursor: pointer;
+    }
     .preview-wrapper {
       padding: 30px;
       background: white;
@@ -229,6 +252,10 @@
         <div class="form-group">
           <label>Téléphone</label>
           <input type="tel" id="phone" placeholder="+33 6 12 34 56 78" oninput="updatePreview()">
+          <label class="checkbox-row">
+            <input type="checkbox" id="showPhone" checked onchange="togglePhone()">
+            Afficher le numéro dans la signature
+          </label>
         </div>
         <div class="form-group">
           <label>Email</label>
@@ -336,7 +363,15 @@
   </div>
 
   <script>
-    function generateSignatureHTML(name, title, phone, email) {
+    function generateSignatureHTML(name, title, phone, email, showPhone) {
+      const phoneRow = showPhone ? `<tr>
+              <td style="width: 28px; vertical-align: middle; padding-bottom: 7px;">
+                <img src="https://img.icons8.com/material-rounded/48/58855C/phone.png" alt="" width="14" height="14" style="display: block;" />
+              </td>
+              <td style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 13px; color: #102D3A; padding-left: 10px; padding-bottom: 7px; font-weight: 500;">
+                ${phone || '+33 6 XX XX XX XX'}
+              </td>
+            </tr>` : '';
       return `<table cellpadding="0" cellspacing="0" border="0" style="font-family: 'Space Grotesk', Arial, Helvetica, sans-serif; color: #102D3A;">
       <tr>
         <td style="vertical-align: middle; padding-right: 22px;">
@@ -357,14 +392,7 @@
                 ${title || 'Poste'}
               </td>
             </tr>
-            <tr>
-              <td style="width: 28px; vertical-align: middle; padding-bottom: 7px;">
-                <img src="https://img.icons8.com/material-rounded/48/58855C/phone.png" alt="" width="14" height="14" style="display: block;" />
-              </td>
-              <td style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 13px; color: #102D3A; padding-left: 10px; padding-bottom: 7px; font-weight: 500;">
-                ${phone || '+33 6 XX XX XX XX'}
-              </td>
-            </tr>
+            ${phoneRow}
             <tr>
               <td style="width: 28px; vertical-align: middle; padding-bottom: 7px;">
                 <img src="https://img.icons8.com/material-rounded/48/58855C/new-post.png" alt="" width="14" height="14" style="display: block;" />
@@ -392,7 +420,13 @@
       const title = document.getElementById('jobTitle').value;
       const phone = document.getElementById('phone').value;
       const email = document.getElementById('email').value;
-      document.getElementById('signature-preview').innerHTML = generateSignatureHTML(name, title, phone, email);
+      const showPhone = document.getElementById('showPhone').checked;
+      document.getElementById('signature-preview').innerHTML = generateSignatureHTML(name, title, phone, email, showPhone);
+    }
+
+    function togglePhone() {
+      document.getElementById('phone').disabled = !document.getElementById('showPhone').checked;
+      updatePreview();
     }
 
     function copySignature() {
@@ -420,7 +454,8 @@
       const title = document.getElementById('jobTitle').value;
       const phone = document.getElementById('phone').value;
       const email = document.getElementById('email').value;
-      const html = generateSignatureHTML(name, title, phone, email);
+      const showPhone = document.getElementById('showPhone').checked;
+      const html = generateSignatureHTML(name, title, phone, email, showPhone);
       navigator.clipboard.writeText(html).then(() => {
         const btn = document.querySelectorAll('.btn-copy')[1];
         const btnText = document.getElementById('btn-html-text');
